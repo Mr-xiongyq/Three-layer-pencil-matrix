@@ -6,12 +6,12 @@ This repository contains two Python scripts for image encryption and decryption 
 
 - `Encryption.py`: Script for encrypting an image.
 - `Decryption.py`: Script for decrypting an encrypted image.
-- `img.png`: Example image used for encryption.
-- `img_1.png`: Example image used for testing.
+- `img.png`: Example of cover image.
+- `img_1.png`: Example of dense image .
 
 ## Requirements
 
-- Python 3.x
+- Python 3.9
 - OpenCV
 - NumPy
 - Matplotlib
