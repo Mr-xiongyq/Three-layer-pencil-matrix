@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 def initialize_matrices():
-    # 建立值矩阵
+    # Create value matrix
     date_matrix = np.zeros((256, 256), dtype=int)
     for i in range(256):
         date_matrix[255, i] = i % 16
@@ -11,7 +11,7 @@ def initialize_matrices():
         for j in range(256):
             date_matrix[i, j] = (date_matrix[i + 1, j] + (4 if i % 2 == 0 else 5)) % 16
 
-    # 建立类矩阵
+    # Create type matrix
     type_matrix = np.zeros((256, 256), dtype=int)
     type_matrix[255, 1] = 0
     type_matrix[255, 0] = 3
@@ -32,7 +32,7 @@ def initialize_matrices():
         for j in range(1, 255, 2):
             type_matrix[i, j] = int(type_matrix[i, j]) ^ int(type_matrix[i - 1, j])
 
-    # 初始化编号矩阵
+    # Initialize number matrix
     no_matrix = np.zeros((256, 256), dtype=int)
     for i in range(0, 253, 11):
         for j in range(0, 252, 6):
@@ -91,30 +91,30 @@ def hide_data(image_path, data):
     cv.imwrite("hidden.png", img)
     # print("Data hidden in image successfully.")
 
-# 主函数
+# Main function
 def main():
     image_path = 'img_1.png'
     if not os.path.exists(image_path):
-        print(f"图像文件 {image_path} 不存在，请检查路径。")
+        print(f"Image file {image_path} does not exist, please check the path.")
         return
 
     img = cv.imread(image_path, 0)
     if img is None:
-        print(f"无法读取图像文件 {image_path}，请检查文件是否损坏。")
+        print(f"Unable to read image file {image_path}, please check if the file is corrupted.")
         return
 
-    # 获取图像的宽度和高度
+    # Get image width and height
     height, width = img.shape
 
-    # 将每个像素的灰度值转换为8位二进制字符串，并将这些字符串存储在一个新的numpy数组中
+    # Convert each pixel's grayscale value to an 8-bit binary string, and store these strings in a new numpy array
     binary_pixels = np.vectorize(lambda x: format(x, '08b'))(img)
 
-    # 将二维数组转换为一维数组，并将所有字符串连接起来
+    # Convert the 2D array to a 1D array, and concatenate all strings
     binary_pixels_string = ''.join(binary_pixels.flatten())
 
     date_matrix, type_matrix, no_matrix = initialize_matrices()
 
-    # 将二进制字符串转换为三部分：四进制、十六进制、四进制
+    # Convert binary string into three parts: quaternary, hexadecimal, quaternary
     n = 8
     substrings = [binary_pixels_string[i:i + n] for i in range(0, len(binary_pixels_string), n)]
     int_array = []
@@ -125,11 +125,11 @@ def main():
         last_two = int(s[6:], 2)
         int_array.extend([first_two, middle_four, last_two])
 
-    # 将数据隐藏到图像中
+    # Hide data in the image
     num = len(substrings) * 2
     hide_data("img.png", num)
 
-    # 从图像中提取数据
+    # Extract data from the image
     image = cv.imread("hidden.png", 0)
     w, h = image.shape
     date_array = [image[x, y] for x in range(w) for y in range(h) if (x * w + y) > 35][:len(substrings) * 2]
@@ -140,7 +140,7 @@ def main():
                                            int_array[3 * (i // 2)], int_array[3 * (i // 2) + 1], int_array[3 * (i // 2) + 2])
         pos_arr.extend(pos)
 
-    # 将位置数组写入图像
+    # Write the position array to the image
     i = 0
     for x in range(w):
         if i == len(pos_arr):
@@ -152,7 +152,7 @@ def main():
                 if i == len(pos_arr):
                     break
 
-    # 保存图像
+    # Save the image
     cv.imwrite("Dence_image.png", image)
     cv.waitKey()
 

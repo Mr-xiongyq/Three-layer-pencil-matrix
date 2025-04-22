@@ -2,9 +2,9 @@ import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
 
-# 封装矩阵初始化函数
+# Function to initialize matrices
 def initialize_matrices():
-    # 建立值矩阵
+    # Initialize date matrix
     date_matrix = np.zeros((256, 256), dtype=int)
     for i in range(256):
         date_matrix[255, i] = i % 16
@@ -12,7 +12,7 @@ def initialize_matrices():
         for j in range(256):
             date_matrix[i, j] = (date_matrix[i + 1, j] + (4 if i % 2 == 0 else 5)) % 16
 
-    # 建立类矩阵
+    # Initialize type matrix
     type_matrix = np.zeros((256, 256), dtype=int)
     type_matrix[255, 1] = 0
     type_matrix[255, 0] = 3
@@ -33,7 +33,7 @@ def initialize_matrices():
         for j in range(1, 255, 2):
             type_matrix[i, j] ^= type_matrix[i - 1, j]
 
-    # 初始化编号矩阵
+    # Initialize number matrix
     no_matrix = np.zeros((256, 256), dtype=int)
     for i in range(0, 253, 11):
         for j in range(0, 252, 6):
@@ -48,7 +48,7 @@ def initialize_matrices():
 
     return date_matrix, type_matrix, no_matrix
 
-# 提取数据函数
+# Function to extract data from image
 def extract_data(image_path):
     img = cv.imread(image_path, cv.IMREAD_GRAYSCALE)
     binary_data = ""
@@ -63,7 +63,7 @@ def extract_data(image_path):
     extracted_data = int(binary_data, 2)
     return extracted_data
 
-# 解密主函数
+# Main decryption function
 def decrypt_image():
     date_matrix, type_matrix, no_matrix = initialize_matrices()
 
@@ -111,6 +111,6 @@ def decrypt_image():
     plt.imshow(gray_image, cmap='gray')
     plt.show()
 
-# 执行解密
+# Execute decryption
 if __name__ == "__main__":
     decrypt_image()
